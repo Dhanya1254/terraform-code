@@ -1,0 +1,27 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: terraform
+spec:
+  interval: 1m
+  url: https://github.com/Dhanya134/terraform.git
+  ref:
+    branch: master
+---
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  name: terra-ec2
+spec:
+  path: ./terraform
+  approvePlan: auto
+  interval: 1m
+  varsFrom:
+  - kind: Secret
+    name: aws-credentials
+  sourceRef:
+    kind: GitRepository
+    name: terraform
+  writeOutputsToSecret:
+    name: instance-details
